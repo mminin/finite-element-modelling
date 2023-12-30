@@ -68,7 +68,7 @@ r1 = RESISTANCE # set known resistance
 j1 = CURRENT
 v2 = GROUND_VOLTAGE  # set ground
 R = Matrix([[r1,-r1],[-r1,r1]])
-K=K.applyfunc(lambda x: 1/x) # find reciprocal of R
+K=R.applyfunc(lambda x: 1/x) # find reciprocal of R
 V = Matrix([c+v1,c+v2])
 J = Matrix([j1,-j1])
 sympy.solve(Eq(K*V,J))
