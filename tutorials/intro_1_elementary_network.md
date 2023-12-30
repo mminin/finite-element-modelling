@@ -7,7 +7,7 @@ The Ohms law can be generalized to any linear system on a network as: ```J=K*V``
 Note the main difference is that Ohms law works on scalars, and FEM works on matrices.
 
 Lets examine the simplest possible network.
-(N1)---E1---(N2).
+(N1)---E1---(N2)
 Here we have a network of two nodes, N1 and N2 and one connecting element between the nodes E1. 
 Now lets suppose that connecting element E1 presents resistance to flow r1 
 (this flow could be anything - electricity, heat, forces, basically anything at all, 
@@ -20,33 +20,28 @@ By Ohms law, we get ```I = (1/R)*V```, lets say voltage differential is 2 and re
 we should have current I=2/2=1.
 
 Now let us solve the same using FEM. First step is to construct a stiffness matrix K.
-Note that K is element-wise reciprocal of R. Lets go ahead and compose matrix R.
-We know that the sum of all resistances going into node N1 is r1, same for node N2; hence
-R11 = R22 = r1.
-Now we can calculate resistaces between nodes, note that sign would be negative.
-R12 = -r1; R21 = -r1; and so our total resistance matrix is
+Note that stiffness is reciprocal of resistance, in other words k=1/r. 
+Lets go ahead and compose matrix K.
+We know that the sum of all stiffnesses going into node N1 is 1/r1, same for node N2; hence
+K11 = K22 = 1/r1.
+Now we can calculate stiffnesses coming out of the nodes, note that sign would be negative 
+(this is the "going-out", hence negative stiffeness).
+K12 = -1/r1; K21 = -r1; and so our total stiffness matrix is
 ```
-R = [[r1,-r1],
+K = [[r1,-r1],
      [-r1,r1]]
 ```
-Now by doing element-wise reciprocal of resistances, we can obtain stiffness matrix K:
-```
-K = recipr(R) = 
-    [[1/r1, -1/r1],
-     [-1/r1, 1/r1]]
-```
-Finding a solution now is trivial. Lets solve for current, which  in our case is J.
+Finding a solution now is trivial. Lets solve for current, which in our case is J.
 ```
 from sympy import symbols, Matrix, Eq
 RESISTANCE = 5
 SUPPLY_VOLTAGE = 5
 GROUND_VOLTAGE = 0
-c, v1, v2, r1, j1 = symbols('c v1 v2 r1 j1')
-r1=RESISTANCE # set known resistance
+c, v1, v2, k1, j1 = symbols('c v1 v2 k1 j1')
+k1=1/RESISTANCE # set known resistance
 v1=SUPPLY_VOLTAGE
 v2=GROUND_VOLTAGE  # set ground
-R = Matrix([[r1,-r1],[-r1,r1]])
-K=R.applyfunc(lambda x: 1/x) # find reciprocal of R
+K = Matrix([[k1,-k1],[-k1,k1]])
 V = Matrix([c+v1,c+v2])
 J = Matrix([j1,-j1])
 sympy.solve(Eq(K*V,J))
@@ -60,15 +55,14 @@ You can verify the answer remains correct by varying program parameters.
 Solving for voltage is just as simple:
 ```
 from sympy import symbols, Matrix, Eq
-c, v1, v2, r1 = symbols('c v1 v2 r1')
+c, v1, v2, k1 = symbols('c v1 v2 k1')
 RESISTANCE = 5
 CURRENT = 5
 GROUND_VOLTAGE = 0
-r1 = RESISTANCE # set known resistance
+k1 = 1/RESISTANCE # set known resistance
 j1 = CURRENT
 v2 = GROUND_VOLTAGE  # set ground
-R = Matrix([[r1,-r1],[-r1,r1]])
-K=R.applyfunc(lambda x: 1/x) # find reciprocal of R
+K = Matrix([[k1,-k1],[-k1,k1]])
 V = Matrix([c+v1,c+v2])
 J = Matrix([j1,-j1])
 sympy.solve(Eq(K*V,J))
