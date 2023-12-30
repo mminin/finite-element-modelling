@@ -23,7 +23,6 @@ RESISTANCE_E1 = 8
 RESISTANCE_E2 = 2
 GROUND_VOLTAGE = 0
 SUPPLY_VOLTAGE = 10
-c=5
 v1=SUPPLY_VOLTAGE
 v3=GROUND_VOLTAGE
 k1 = 1/RESISTANCE_E1
@@ -32,7 +31,7 @@ K12 = Matrix([[k1,-k1,0],[-k1,k1,0],[0,0,0]])
 K23 = Matrix([[0,0,0],[0,k2, -k2],[0,-k2,k2]])
 
 K=K12+K23
-V = Matrix([c+v1,c+v2,c+v3])
+V = Matrix([c+v1,c+v2,c+v3]) # Note that c is just a constant which cancels out in calculations.
 J = Matrix([j1,0,j3])
 sympy.solve(Eq(K*V,J))
 ```
