@@ -45,6 +45,13 @@ Matrix([
 [  0,          -k2,  k2,   0],
 [  0,          -k3,   0,  k3]])
 ```
+Solve the system as follows:
+```
+V = Matrix([v1,v2,v3, v4])
+J = Matrix([j1,0,0, j2])
+sympy.solve(Eq(K*V,J))
+```
+
 Notice that v2=v3 regardless or resistances assigned (try varying them), 
 as long as there is no current draw on node N3.
 This may seem counterintuitive, but you can easily confirm this experimentally.
